@@ -26,6 +26,13 @@ const PIECES = [
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
 ];
 
+const THEMES = {
+  dark:  { grid: '#22222e', highlight: 'rgba(255,255,255,0.12)' },
+  light: { grid: '#d8d8e4', highlight: 'rgba(255,255,255,0.35)' },
+};
+
+const THEME_KEY = 'tetris-theme';
+
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
 const canvas = document.getElementById('board');
@@ -39,6 +46,9 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const themeBtn = document.getElementById('theme-toggle');
+
+let theme = 'dark';
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
@@ -163,13 +173,13 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
   // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
+  context.fillStyle = THEMES[theme].highlight;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
   context.globalAlpha = 1;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = THEMES[theme].grid;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -301,4 +311,24 @@ document.addEventListener('keydown', e => {
 
 restartBtn.addEventListener('click', init);
 
+function setTheme(name) {
+  theme = name === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  const isLight = theme === 'light';
+  themeBtn.setAttribute('aria-pressed', String(isLight));
+  themeBtn.textContent = isLight ? '🌙 Modo oscuro' : '☀️ Modo claro';
+  try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* ignorar */ }
+  // redibujar aunque el juego esté en pausa o terminado
+  if (current && next) { draw(); drawNext(); }
+}
+
+themeBtn.addEventListener('click', () => {
+  setTheme(theme === 'dark' ? 'light' : 'dark');
+  themeBtn.blur(); // evita que Space/Enter vuelvan a activar el botón
+});
+
 init();
+
+let savedTheme = 'dark';
+try { savedTheme = localStorage.getItem(THEME_KEY) || 'dark'; } catch (e) { /* ignorar */ }
+setTheme(savedTheme);
