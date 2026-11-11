@@ -56,6 +56,30 @@
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
+
+    <!-- ---- Pause menu ---- -->
+    <div id="pause-menu" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Menú de pausa">
+      <div class="overlay-box pause-box">
+        <p class="pause-title">PAUSA</p>
+        <button type="button" id="pm-resume" class="pm-btn">Reanudar</button>
+        <button type="button" id="pm-restart" class="pm-btn">Reiniciar</button>
+        <button type="button" id="pm-controls-btn" class="pm-btn" aria-expanded="false">Ver controles</button>
+        <ul id="pm-controls" class="pm-controls hidden">
+          <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+          <li><kbd>↑</kbd> / <kbd>X</kbd> rotar</li>
+          <li><kbd>↓</kbd> bajar</li>
+          <li><kbd>Space</kbd> caída</li>
+          <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+        </ul>
+        <div class="pm-level">
+          <span class="pm-level-label">Nivel inicial</span>
+          <button type="button" id="pm-level-dec" class="pm-step" aria-label="Bajar nivel inicial">−</button>
+          <span id="pm-level-value" class="pm-level-value">1</span>
+          <button type="button" id="pm-level-inc" class="pm-step" aria-label="Subir nivel inicial">+</button>
+        </div>
+        <p class="pm-hint">Se aplica al reiniciar</p>
+      </div>
+    </div>
   </div>
   </div>
 

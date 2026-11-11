@@ -50,6 +50,7 @@ const themeBtn = document.getElementById('theme-toggle');
 
 let theme = 'dark';
 
+let startLevelUsed = 1;
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
 function createBoard() {
@@ -116,7 +117,7 @@ function clearLines() {
   if (cleared) {
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
+    level = Math.max(startLevelUsed, Math.floor(lines / 10) + 1);
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
@@ -236,19 +237,80 @@ function endGame() {
   overlay.classList.remove('hidden');
 }
 
+// ---- Pause menu ----
+const START_LEVEL_KEY = 'tetris.startLevel';
+const MAX_START_LEVEL = 10;
+const RESUME_GRACE_MS = 150;
+
+const pauseMenu = document.getElementById('pause-menu');
+const pmResume = document.getElementById('pm-resume');
+const pmRestart = document.getElementById('pm-restart');
+const pmControlsBtn = document.getElementById('pm-controls-btn');
+const pmControls = document.getElementById('pm-controls');
+const pmLevelDec = document.getElementById('pm-level-dec');
+const pmLevelInc = document.getElementById('pm-level-inc');
+const pmLevelValue = document.getElementById('pm-level-value');
+
+let startLevel = 1;
+try {
+  const saved = parseInt(localStorage.getItem(START_LEVEL_KEY), 10);
+  if (saved >= 1 && saved <= MAX_START_LEVEL) startLevel = saved;
+} catch (e) { /* ignorar */ }
+let inputLockUntil = 0;
+
+function dropIntervalFor(lvl) {
+  return Math.max(100, 1000 - (lvl - 1) * 90);
+}
+
+function setStartLevel(n) {
+  startLevel = Math.min(MAX_START_LEVEL, Math.max(1, n));
+  pmLevelValue.textContent = startLevel;
+  try { localStorage.setItem(START_LEVEL_KEY, String(startLevel)); } catch (e) { /* ignorar */ }
+}
+
+function openPauseMenu() {
+  paused = true;
+  cancelAnimationFrame(animId);
+  pmControls.classList.add('hidden');
+  pmControlsBtn.setAttribute('aria-expanded', 'false');
+  pmLevelValue.textContent = startLevel;
+  pauseMenu.classList.remove('hidden');
+  pmResume.focus();
+}
+
+function closePauseMenu() {
+  pauseMenu.classList.add('hidden');
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+}
+
 function togglePause() {
   if (gameOver) return;
-  paused = !paused;
-  if (!paused) {
+  if (paused) {
+    paused = false;
+    closePauseMenu();
+    inputLockUntil = performance.now() + RESUME_GRACE_MS;
+    dropAccum = 0;
     lastTime = performance.now();
-    loop(lastTime);
-  } else {
     cancelAnimationFrame(animId);
-    overlayTitle.textContent = 'PAUSA';
-    overlayScore.textContent = '';
-    overlay.classList.remove('hidden');
+    animId = requestAnimationFrame(loop);
+  } else {
+    openPauseMenu();
   }
 }
+
+pmResume.addEventListener('click', togglePause);
+pmRestart.addEventListener('click', () => {
+  closePauseMenu();
+  init();
+});
+pmControlsBtn.addEventListener('click', () => {
+  const show = pmControls.classList.toggle('hidden') === false;
+  pmControlsBtn.setAttribute('aria-expanded', String(show));
+  pmControlsBtn.blur();
+});
+pmLevelDec.addEventListener('click', () => { setStartLevel(startLevel - 1); pmLevelDec.blur(); });
+pmLevelInc.addEventListener('click', () => { setStartLevel(startLevel + 1); pmLevelInc.blur(); });
+// ---- end Pause menu ----
 
 function loop(ts) {
   const dt = ts - lastTime;
@@ -270,10 +332,13 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  startLevelUsed = startLevel;
+  level = startLevelUsed;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = dropIntervalFor(level);
+  inputLockUntil = 0;
+  pauseMenu.classList.add('hidden');
   dropAccum = 0;
   lastTime = performance.now();
   next = randomPiece();
@@ -285,8 +350,22 @@ function init() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyP') { togglePause(); return; }
-  if (paused || gameOver) return;
+  if (e.code === 'KeyP' || e.code === 'Escape') {
+    if (!e.repeat) togglePause();
+    return;
+  }
+  if (paused || gameOver) {
+    // menú abierto: bloquear teclas del juego (Space/flechas no deben hacer scroll ni activar nada)
+    if (paused && ['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code) &&
+        !(document.activeElement && document.activeElement.closest('#pause-menu') && e.code === 'Space')) {
+      e.preventDefault();
+    }
+    return;
+  }
+  if (performance.now() < inputLockUntil) {
+    if (e.code === 'Space') e.preventDefault();
+    return;
+  }
   switch (e.code) {
     case 'ArrowLeft':
       if (!collide(current.shape, current.x - 1, current.y)) current.x--;
