@@ -143,6 +143,56 @@ body {
   border-color: var(--accent);
 }
 
+/* ---- Skins ---- */
+#skin-select {
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#skin-select:hover {
+  border-color: var(--accent);
+}
+
+body.skin-neon #board,
+body.skin-neon #next-canvas {
+  background: #000;
+  border-color: #00f0ff;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.35);
+}
+
+body.skin-neon .title {
+  color: #00f0ff;
+  text-shadow: 0 0 12px #00f0ff, 0 0 28px #d400ff;
+}
+
+body.skin-pastel #board,
+body.skin-pastel #next-canvas {
+  background: #fdf6fb;
+  border-radius: 14px;
+}
+
+body.skin-pastel .title {
+  color: #e59fc4;
+  text-shadow: 0 0 16px rgba(229, 159, 196, 0.5);
+}
+
+body.skin-pixel #board,
+body.skin-pixel #next-canvas {
+  border-radius: 0;
+  border: 3px solid var(--border);
+}
+
+body.skin-pixel .title,
+body.skin-pixel .value {
+  font-family: 'Courier New', Courier, monospace;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
 /* ---- Controles ---- */
 .controls ul {
   list-style: none;
