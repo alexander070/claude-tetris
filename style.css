@@ -223,3 +223,57 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Records ---- */
+.start-title, .new-record {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+.new-record.hidden, .name-form.hidden { display: none; }
+
+.records { min-width: 220px; }
+
+.records-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.records-table td { padding: 3px 6px; text-align: left; }
+.records-table td.num { font-family: 'Courier New', Courier, monospace; text-align: right; color: var(--accent); }
+.records-table tr.highlight { background: var(--accent); }
+.records-table tr.highlight td, .records-table tr.highlight td.num { color: var(--btn-text); font-weight: 700; }
+
+.records-empty, .records-extra { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+.name-form { display: flex; gap: 6px; }
+.name-form input {
+  width: 130px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--kbd-border);
+  background: var(--kbd-bg);
+  color: var(--text);
+  user-select: text;
+}
+
+#start-btn, #save-name-btn {
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+#start-btn:hover, #save-name-btn:hover { background: var(--accent-hover); }
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link-btn:hover { color: var(--danger); }
