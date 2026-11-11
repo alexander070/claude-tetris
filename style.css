@@ -223,3 +223,111 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Pause menu ---- */
+#pause-menu .hidden,
+.pm-controls.hidden {
+  display: none;
+}
+
+.pause-box {
+  width: 220px;
+  gap: 10px;
+}
+
+.pause-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.pm-btn {
+  width: 100%;
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pm-btn:hover,
+.pm-btn:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+#pm-resume {
+  background: var(--accent);
+  color: var(--btn-text);
+  border-color: var(--accent);
+}
+
+#pm-resume:hover,
+#pm-resume:focus-visible {
+  background: var(--accent-hover);
+}
+
+.pm-controls {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pm-controls li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pm-level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.pm-level-label {
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.pm-level-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 24px;
+}
+
+.pm-step {
+  width: 28px;
+  height: 28px;
+  background: var(--kbd-bg);
+  color: var(--text);
+  border: 1px solid var(--kbd-border);
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pm-step:hover,
+.pm-step:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.pm-hint {
+  font-size: 11px;
+  color: var(--label);
+}
